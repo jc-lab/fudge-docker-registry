@@ -9,7 +9,7 @@
     "build": "npm run lint-check && webpack && npm run build-sqlite3"
   },
   "dependencies": {
-    "@jc-lab/docker-registry-client": "^3.3.0-jclab1",
+    "@jc-lab/docker-registry-client": "^3.3.0-jclab2",
     "body-parser": "^1.19.0",
     "bunyan": "^1.8.14",
     "cookie-parser": "~1.4.4",

@@ -2,6 +2,7 @@ import * as bunyan from 'bunyan';
 import * as drc from '@jc-lab/docker-registry-client';
 // eslint-disable-next-line
 import * as restify from 'restify';
+import * as http from 'http';
 
 import appEnv from '@src/app-env';
 
@@ -382,25 +383,39 @@ export class DownloadingImageInfo {
 
       this.repoClient.createBlobReadStream({
         digest
-      }, (err: any, stream: NodeJS.ReadableStream /* , res: restify.Response */) => {
-        if (err) {
-          blobContext.reject(err);
+      }, (blobErr: any, stream: http.IncomingMessage) => {
+        if (blobErr) {
+          blobContext.reject(blobErr);
           return;
         }
+
         store.preparePutBlob(
           '', this.localImageName, digest
         )
-          .then((putContext) => new Promise<store.PutBlobContext>((resolve, reject) => {
+          .then((putContext) => new Promise<store.PutBlobContext>((presolve, preject) => {
+            let returned = false;
+            const resolve = () => {
+              if (returned) return;
+              returned = true;
+              presolve(putContext);
+            };
+            const reject = (e: any) => {
+              if (returned) return;
+              returned = true;
+              preject(e);
+            };
+
             const writeStream = putContext.createWriteStream();
-            stream.pipe(writeStream)
-              .on('end', () => {
-                if (!putContext.validate()) {
-                  reject(new CustomError(errors.DIGEST_INVALID));
-                  return;
-                }
-                resolve(putContext);
+            stream
+              .on('error', (err) => {
+                reject(err);
+              })
+              .pipe(writeStream)
+              .on('finish', () => {
+                resolve();
               })
               .on('error', (e) => reject(e));
+            stream.resume();
           }))
           .then((putContext) => putContext.commit())
           .then(() => {
