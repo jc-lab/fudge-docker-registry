@@ -38,6 +38,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-async-promise-executor': 'off',
     'no-console': 'off',
-    'comma-dangle': ['error', 'never']
+    'comma-dangle': ['error', 'never'],
+    'no-cond-assign': 'off'
   }
 };
