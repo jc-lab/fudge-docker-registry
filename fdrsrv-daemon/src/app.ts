@@ -76,6 +76,13 @@ router.use((err: any, req: express.Request, res: express.Response) => {
         }]
       });
     }
+  } else {
+    console.error('Unknown error:', err);
+    res
+      .status(500)
+      .send({
+        message: `Server Error: ${err.message}`
+      });
   }
 });
 
