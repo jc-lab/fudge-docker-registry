@@ -49,8 +49,8 @@ parts:
       mkdir -p ${SNAPCRAFT_PART_INSTALL}/app
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
       . $NVM_DIR/nvm.sh
-      nvm install 12.16.1
-      cp -rf $NVM_DIR/versions/node/v12.16.1/* ${SNAPCRAFT_PART_INSTALL}/
+      nvm install 12.18.3
+      cp -rf $NVM_DIR/versions/node/v12.18.3/* ${SNAPCRAFT_PART_INSTALL}/
       cp -rf fdrsrv-resources/wrappers ${SNAPCRAFT_PART_INSTALL}/wrappers
       cp -rf fdrsrv-resources/default-args ${SNAPCRAFT_PART_INSTALL}/default-args
       chmod +x ${SNAPCRAFT_PART_INSTALL}/wrappers/*

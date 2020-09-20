@@ -110,7 +110,14 @@ class ImageTagContext {
 
   public waitingList: FutureCallback<IGetManifestResult>[] = [];
 
-  public manifestFetched: boolean = false;
+  /**
+   * 0: Fetching
+   * 1: Resolved
+   * 2: Rejected
+   */
+  public manifestState: number = 0;
+
+  public manifestFetchError: any;
 
   public manifestSchemaVersion: number = 0;
 
@@ -131,20 +138,24 @@ class ImageTagContext {
   }
 
   resolve() {
-    this.manifestFetched = true;
-    this.waitingList.forEach((item) => {
+    this.manifestState = 1;
+    let item: FutureCallback<IGetManifestResult>;
+    while ((item = this.waitingList.shift())) {
       item.resolve({
         mediaType: this.manifestMediaType,
         manifest: this.manifestString
       });
-    });
+    }
   }
 
   reject(err: any) {
     const httpError = toHttpError(err);
-    this.waitingList.forEach((item) => {
+    this.manifestState = 2;
+    this.manifestFetchError = err;
+    let item: FutureCallback<IGetManifestResult>;
+    while ((item = this.waitingList.shift())) {
       item.reject(httpError);
-    });
+    }
   }
 
   finish() {
@@ -267,10 +278,11 @@ class ImageTagContext {
           .catch((err) => {
             reject(err);
           });
+      } else if (manifest.mediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
+        resolve();
+      } else {
+        reject(new Error('Unknown mediaType'));
       }
-      // else if (manifest.mediaType === 'application/vnd.docker.distribution.manifest.v2+json') {
-      //
-      // }
     });
   }
 }
@@ -330,13 +342,16 @@ export class DownloadingImageInfo {
   ): void {
     if (this.tagContext[reference]) {
       const tagContext = this.tagContext[reference];
-      if (tagContext.manifestFetched) {
+      if (tagContext.manifestState === 1) {
         callbacks.resolve({
           mediaType: tagContext.manifestMediaType,
           manifest: tagContext.manifestString
         });
+      } else if (tagContext.manifestState === 2) {
+        callbacks.reject(toHttpError(tagContext.manifestFetchError));
+      } else {
+        this.tagContext[reference].waitingList.push(callbacks);
       }
-      this.tagContext[reference].waitingList.push(callbacks);
     } else {
       const tagContext = new ImageTagContext(this, reference);
       this.tagContext[reference] = tagContext;
