@@ -46,43 +46,45 @@ router.use((req: express.Request, res, next) => {
 router.use('/auth', authRouter);
 router.use('/v2', v2Router);
 router.use((err: any, req: express.Request, res: express.Response) => {
-  if (HttpError.isInstance(err)) {
-    res.status(err.status);
-    if (err.response) {
-      res.send(err.response);
-    } else if (err.errors) {
-      res.send({
-        errors: err.errors
-      });
-    } else if (UnauthorizedError.isInstance(err)) {
-      res
-        .status(401)
-        .header('WWW-Authenticate', `Bearer realm="${`${appEnv.getAppEndpoint(req)}/auth/token`}",service="${appEnv.getHost(req)}"`)
-        .send({
-          errors: [
-            {
-              code: 'UNAUTHORIZED',
-              message: err.message,
-              details: null
-            }
-          ]
+  if (err) {
+    if (HttpError.isInstance(err)) {
+      res.status(err.status);
+      if (err.response) {
+        res.send(err.response);
+      } else if (err.errors) {
+        res.send({
+          errors: err.errors
         });
+      } else if (UnauthorizedError.isInstance(err)) {
+        res
+          .status(401)
+          .header('WWW-Authenticate', `Bearer realm="${`${appEnv.getAppEndpoint(req)}/auth/token`}",service="${appEnv.getHost(req)}"`)
+          .send({
+            errors: [
+              {
+                code: 'UNAUTHORIZED',
+                message: err.message,
+                details: null
+              }
+            ]
+          });
+      } else {
+        res.send({
+          errors: [{
+            code: err.name,
+            message: err.message,
+            details: (CustomError.isInstance(err)) ? err.details : undefined
+          }]
+        });
+      }
     } else {
-      res.send({
-        errors: [{
-          code: err.name,
-          message: err.message,
-          details: (CustomError.isInstance(err)) ? err.details : undefined
-        }]
-      });
+      console.error('Unknown error:', err);
+      res
+        .status(500)
+        .send({
+          message: `Server Error: ${err.message}`
+        });
     }
-  } else {
-    console.error('Unknown error:', err);
-    res
-      .status(500)
-      .send({
-        message: `Server Error: ${err.message}`
-      });
   }
 });
 
