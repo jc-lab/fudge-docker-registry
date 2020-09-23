@@ -39,6 +39,7 @@ module.exports = {
     'no-async-promise-executor': 'off',
     'no-console': 'off',
     'comma-dangle': ['error', 'never'],
-    'no-cond-assign': 'off'
+    'no-cond-assign': 'off',
+    'max-len': 'off'
   }
 };

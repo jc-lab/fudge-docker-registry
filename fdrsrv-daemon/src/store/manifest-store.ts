@@ -63,7 +63,7 @@ export function putManifest(name: string, reference: string, data: string): Prom
   const { schemaVersion } = manifest;
   return dbIsolateRun((db) => new Promise((resolve, reject) => {
     db.run(
-      'INSERT INTO `manifest` (`name`, `tag`, `schema_version`, `uploaded_at`, `media_type`, `manifest`) VALUES (?, ?, ?, ?, ?)',
+      'INSERT OR IGNORE INTO `manifest` (`name`, `tag`, `schema_version`, `uploaded_at`, `media_type`, `manifest`) VALUES (?, ?, ?, ?, ?, ?)',
       [name, reference, schemaVersion, uploadedAt.getTime(), manifest.mediaType, data],
       (err) => {
         if (err) reject(err);

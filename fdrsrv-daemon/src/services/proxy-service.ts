@@ -13,47 +13,10 @@ import * as store from '@src/store';
 
 import computeDigest from '@src/utils/digest';
 
-interface IManifestSchemaVersion2 {
-  schemaVersion: number;
-  mediaType: string;
-  config: {
-    mediaType: string;
-    size: number;
-    digest: string;
-  };
-  layers?: [{
-    mediaType: string;
-    size: number;
-    digest: string;
-  }];
-  manifests?: [{
-    digest: string,
-    mediaType: string;
-    platform: {
-      architecture: string;
-      os: string;
-    },
-    size: string;
-  }];
-}
-
-interface IManifestSchemaVersion1 {
-  schemaVersion: number;
-  name: string;
-  tag: string;
-  architecture: string;
-  fsLayers: {
-    blobSum: string;
-  }[];
-  history: {
-    v1Compatibility: string;
-  }[];
-  signatures: {
-    header: any;
-    signature: string;
-    protected: string;
-  };
-}
+import {
+  IManifestSchemaVersion1,
+  IManifestSchemaVersion2
+} from '../types';
 
 export interface IGetManifestResult {
   mediaType: string;
@@ -245,7 +208,7 @@ class ImageTagContext {
       this.manifestList.forEach((item) => {
         list.push(new Promise<void>((resolve, reject) => {
           db.run(
-            'INSERT INTO `manifest` (`name`, `tag`, `schema_version`, `uploaded_at`, `media_type`, `manifest`) VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT OR IGNORE INTO `manifest` (`name`, `tag`, `schema_version`, `uploaded_at`, `media_type`, `manifest`) VALUES (?, ?, ?, ?, ?, ?)',
             [
               this.parent.localImageName,
               item.tag,

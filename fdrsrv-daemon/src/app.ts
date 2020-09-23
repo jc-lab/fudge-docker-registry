@@ -9,6 +9,7 @@ import appEnv from './app-env';
 
 import authRouter from './routes/auth';
 import v2Router from './v2/routes';
+import fdrsrvRouter from './fdrsrv-api/routes';
 
 import HttpError from './http-errors/base';
 import CustomError from './http-errors/custom-error';
@@ -45,6 +46,7 @@ router.use((req: express.Request, res, next) => {
 });
 router.use('/auth', authRouter);
 router.use('/v2', v2Router);
+router.use('/fdrsrv', fdrsrvRouter);
 router.use((err: any, req: express.Request, res: express.Response) => {
   if (err) {
     if (HttpError.isInstance(err)) {

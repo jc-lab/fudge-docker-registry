@@ -23,6 +23,7 @@
     "morgan": "~1.9.1",
     "restify-clients": "^4.0.0",
     "sqlite3": "^4.1.1",
+    "tar-stream": "^2.1.4",
     "uuid": "^7.0.2"
   },
   "devDependencies": {
@@ -43,6 +44,7 @@
     "@types/node": "^13.9.5",
     "@types/restify": "^8.4.2",
     "@types/sqlite3": "^3.1.6",
+    "@types/tar-stream": "^2.1.0",
     "@types/uuid": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
