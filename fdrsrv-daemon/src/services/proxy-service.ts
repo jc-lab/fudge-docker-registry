@@ -37,6 +37,24 @@ interface IManifestSchemaVersion2 {
   }];
 }
 
+interface IManifestSchemaVersion1 {
+  schemaVersion: number;
+  name: string;
+  tag: string;
+  architecture: string;
+  fsLayers: {
+    blobSum: string;
+  }[];
+  history: {
+    v1Compatibility: string;
+  }[];
+  signatures: {
+    header: any;
+    signature: string;
+    protected: string;
+  };
+}
+
 export interface IGetManifestResult {
   mediaType: string;
   manifest: string;
@@ -445,6 +463,18 @@ export class DownloadingImageInfo {
           manifest.layers.forEach((layer) => {
             promiseList.push(new Promise<void>((resolve) => {
               this.addBlobDownload(layer.digest, {
+                resolve,
+                reject: () => resolve()
+              });
+            }));
+          });
+        }
+      } else if (manifestItem.schemaVersion === 1) {
+        const manifest: IManifestSchemaVersion1 = manifestItem.data;
+        if (manifest.fsLayers) {
+          manifest.fsLayers.forEach((layer) => {
+            promiseList.push(new Promise<void>((resolve) => {
+              this.addBlobDownload(layer.blobSum, {
                 resolve,
                 reject: () => resolve()
               });
