@@ -433,6 +433,14 @@ export class DownloadingImageInfo {
     tagContext.manifestList.forEach((manifestItem) => {
       if (manifestItem.schemaVersion === 2) {
         const manifest: IManifestSchemaVersion2 = manifestItem.data;
+        if (manifest.config) {
+          promiseList.push(new Promise<void>((resolve) => {
+            this.addBlobDownload(manifest.config.digest, {
+              resolve,
+              reject: () => resolve()
+            });
+          }));
+        }
         if (manifest.layers) {
           manifest.layers.forEach((layer) => {
             promiseList.push(new Promise<void>((resolve) => {
