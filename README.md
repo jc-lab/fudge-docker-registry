@@ -5,6 +5,8 @@
 fudge-docker-registry allows you to use these images offline (private network) without modifying the deployment/statefulset image.
 
 
+# Usage
+
 
 ## Snap Install
 
@@ -247,3 +249,24 @@ module.exports = {
 
 * type : string
 
+
+## Export
+reqdata.json
+```json
+{
+  "imageList": [
+    "ubuntu:18.04",
+    "ubuntu:20.04"
+  ]
+}
+```
+
+```bash
+curl  -o image1.tar -X POST -d "@reqdata.json" -H 'content-type: application/json; charset=utf-8' http://SERVER_ADDRESS/fdrsrv/export/multiple
+```
+
+## Import
+
+```bash
+curl -X POST -d "@image1.tar" -H 'content-type: application/octet-stream' http://SERVER_ADDRESS/fdrsrv/import/upload
+```
