@@ -268,5 +268,5 @@ curl  -o image1.tar -X POST -d "@reqdata.json" -H 'content-type: application/jso
 ## Import
 
 ```bash
-curl -X POST -d "@image1.tar" -H 'content-type: application/octet-stream' http://SERVER_ADDRESS/fdrsrv/import/upload
+curl -X POST --data-binary "@image1.tar" -H 'content-type: application/octet-stream' http://SERVER_ADDRESS/fdrsrv/import/upload
 ```
