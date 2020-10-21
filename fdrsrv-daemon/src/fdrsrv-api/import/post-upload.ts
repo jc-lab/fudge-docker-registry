@@ -39,8 +39,6 @@ export default (req: express.Request, res: express.Response, expressNext: any) =
         uploadId,
         err
       }, 'Impport failed');
-      console.error(err);
-
       expressNext(err);
       state = ResponseState.REJECTED;
     }
@@ -117,5 +115,9 @@ export default (req: express.Request, res: express.Response, expressNext: any) =
           resolveRequest();
         })
         .catch((err) => rejectRequest(err));
+    })
+    .on('error', (err) => {
+      tarExtract.destroy(err);
+      rejectRequest(err);
     });
 };
