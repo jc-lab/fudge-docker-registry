@@ -35,7 +35,6 @@ app.use(bodyParser.json({
     (req as any).rawBody = buf;
   }
 }));
-app.use(bodyParser.raw());
 // app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
