@@ -51,8 +51,9 @@ parts:
       . $NVM_DIR/nvm.sh
       nvm install 12.18.3
       cp -rf $NVM_DIR/versions/node/v12.18.3/* ${SNAPCRAFT_PART_INSTALL}/
-      cp -rf fdrsrv-resources/wrappers ${SNAPCRAFT_PART_INSTALL}/wrappers
-      cp -rf fdrsrv-resources/default-args ${SNAPCRAFT_PART_INSTALL}/default-args
+      mkdir -p ${SNAPCRAFT_PART_INSTALL}/wrappers ${SNAPCRAFT_PART_INSTALL}/default-args
+      cp -rf fdrsrv-resources/wrappers/* ${SNAPCRAFT_PART_INSTALL}/wrappers
+      cp -rf fdrsrv-resources/default-args/* ${SNAPCRAFT_PART_INSTALL}/default-args
       chmod +x ${SNAPCRAFT_PART_INSTALL}/wrappers/*
       cd ./fdrsrv-daemon
       npm install

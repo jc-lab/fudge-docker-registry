@@ -1,0 +1,6 @@
+mkdir -p ${SNAP_COMMON}/args
+if [ ! -f ${SNAP_COMMON}/args/daemon-env ]; then
+  cp ${SNAP}/default-args/daemon-env ${SNAP_COMMON}/args/daemon-env
+  chmod 640 ${SNAP_COMMON}/args/daemon-env
+fi
+
