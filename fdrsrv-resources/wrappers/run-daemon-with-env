@@ -7,10 +7,13 @@ app=daemon
 
 export APP_EXEC_DIR=$SNAP/app
 
-declare -a args="($(cat $SNAP_DATA/args/$app))"
-if [ -f ${SNAP_DATA}/args/${app}-env ]; then
+SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
+. $SCRIPT_DIR/init-base
+
+declare -a args="($(cat $SNAP_COMMON/args/$app))"
+if [ -f ${SNAP_COMMON}/args/${app}-env ]; then
   set -a
-  . "${SNAP_DATA}/args/${app}-env"
+  . "${SNAP_COMMON}/args/${app}-env"
   set +a
 fi
 
